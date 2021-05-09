@@ -7,8 +7,6 @@ from dateutil.parser import isoparse
 import calendar
 from typing import Optional
 
-bot = commands.Bot(command_prefix='~')
-
 api_base = "https://api.jikan.moe/v3/"
 
 def get_current_day():
@@ -20,8 +18,19 @@ def timestamp_to_formatted_time(timestamp):
     date = isoparse(timestamp)
     return date.strftime('%-I:%M %p')
 
+help_command = commands.DefaultHelpCommand(
+    no_category = 'Commands'
+)
+
+bot = commands.Bot(
+    command_prefix='~',
+    help_command = help_command
+)
+
 @bot.command()
 async def search(ctx, *, query: str):
+    """Returns the top three anime that match the given search parameter"""
+
     async with aiohttp.ClientSession() as session:
         url = api_base+"search/anime?q="+query
         async with session.get(url) as resp:
@@ -41,6 +50,8 @@ async def search(ctx, *, query: str):
 
 @bot.command()
 async def top(ctx):
+    """Returns the top 5 anime of all time according to MyAnimeList"""
+
     async with aiohttp.ClientSession() as session:
         url = api_base+"top/anime"
         async with session.get(url) as resp:
@@ -60,6 +71,8 @@ async def top(ctx):
 
 @bot.command()
 async def schedule(ctx, day: Optional[str] = get_current_day()):
+    """Returns the anime schedule for a given day (defaults to today)"""
+
     async with aiohttp.ClientSession() as session:
         url = api_base + "schedule/" + day
         async with session.get(url) as resp:
