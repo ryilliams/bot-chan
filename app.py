@@ -14,15 +14,16 @@ async def search(ctx, *, query: str):
         async with session.get(url) as resp:
             content = await resp.json()
 
-            first_result = content['results'][0]
+            await ctx.send('Here\'s the top 3 results:')
 
-            embed = discord.Embed(
-                title=first_result['title'],
-                description=first_result['synopsis'],
-                url=first_result['url']
-            )
-            embed.set_thumbnail(url=first_result['image_url'])
+            for result in content['results'][:3]:
+                embed = discord.Embed(
+                    title=result['title'],
+                    description=result['synopsis'],
+                    url=result['url']
+                )
+                embed.set_thumbnail(url=result['image_url'])
 
-            await ctx.send(embed=embed)
+                await ctx.send(embed=embed)
 
 bot.run(os.getenv('DISCORD_TOKEN'))
