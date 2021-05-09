@@ -24,7 +24,8 @@ help_command = commands.DefaultHelpCommand(
 
 bot = commands.Bot(
     command_prefix='~',
-    help_command = help_command
+    help_command = help_command,
+    description = "Returns information about anime obtained via MyAnimeList.com"
 )
 
 @bot.command()
