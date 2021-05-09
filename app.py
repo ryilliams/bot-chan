@@ -5,6 +5,7 @@ import aiohttp
 from datetime import date
 from dateutil.parser import isoparse
 import calendar
+from typing import Optional
 
 bot = commands.Bot(command_prefix='~')
 
@@ -58,15 +59,13 @@ async def top(ctx):
                 await ctx.send(embed=embed)
 
 @bot.command()
-async def schedule(ctx):
+async def schedule(ctx, day: Optional[str] = get_current_day()):
     async with aiohttp.ClientSession() as session:
-        day = get_current_day()
-
         url = api_base + "schedule/" + day
         async with session.get(url) as resp:
             content = await resp.json()
 
-            message = 'Here\'s today\'s schedule:\n'
+            message = f'Here\'s {day}\'s schedule:\n'
 
             for result in content[day]:
                 time = timestamp_to_formatted_time(result['airing_start'])
