@@ -26,4 +26,23 @@ async def search(ctx, *, query: str):
 
                 await ctx.send(embed=embed)
 
+@bot.command()
+async def top(ctx):
+    async with aiohttp.ClientSession() as session:
+        url = api_base+"top/anime"
+        async with session.get(url) as resp:
+            content = await resp.json()
+
+            await ctx.send('Here\'s the top 5 anime of all time:')
+
+            for result in content['top'][:5]:
+                embed = discord.Embed(
+                    title=result['title'],
+                    description=f"Rank: {result['rank']}\nScore: {result['score']}",
+                    url=result['url']
+                )
+                embed.set_thumbnail(url=result['image_url'])
+
+                await ctx.send(embed=embed)
+
 bot.run(os.getenv('DISCORD_TOKEN'))
