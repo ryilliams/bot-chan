@@ -9,6 +9,8 @@ from typing import Optional
 
 api_base = "https://api.jikan.moe/v3/"
 
+valid_days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+
 def get_current_day():
     weekday = date.today().weekday()
     day_str = calendar.day_name[weekday]
@@ -29,8 +31,12 @@ bot = commands.Bot(
 )
 
 @bot.command()
-async def search(ctx, *, query: str):
+async def search(ctx, *, query: Optional[str]):
     """Returns the top three anime that match the given search parameter"""
+
+    if query == None:
+        await ctx.send('You must pass a search query!')
+        return
 
     async with aiohttp.ClientSession() as session:
         url = api_base+"search/anime?q="+query
@@ -73,6 +79,10 @@ async def top(ctx):
 @bot.command()
 async def schedule(ctx, day: Optional[str] = get_current_day()):
     """Returns the anime schedule for a given day (defaults to today)"""
+
+    if day not in valid_days:
+        await ctx.send(f'Invalid day, must be one of: {", ".join(valid_days)}')
+        return
 
     async with aiohttp.ClientSession() as session:
         url = api_base + "schedule/" + day
