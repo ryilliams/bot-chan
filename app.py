@@ -77,10 +77,12 @@ async def top(ctx):
                 await ctx.send(embed=embed)
 
 @bot.command()
-async def schedule(ctx, day: Optional[str] = get_current_day()):
+async def schedule(ctx, day: Optional[str]):
     """Returns the anime schedule for a given day (defaults to today)"""
 
-    if day not in valid_days:
+    if day == None:
+        day = get_current_day()
+    elif day not in valid_days:
         await ctx.send(f'Invalid day, must be one of: {", ".join(valid_days)}')
         return
 
